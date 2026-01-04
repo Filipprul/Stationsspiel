@@ -1,22 +1,32 @@
+const int kabelPins[] = {1, 2, 3, 4};
+bool status = false;
+
 void setup() {
+  Serial.begin(115200);
+
+  for(i = 0; i < 4; i++){
+    pinMode(kabelPins[i], INPUT_PULLUP);
+  }
+  Serial.println("System bereit!");
 }
 
-void callback(char* topic, byte* payload, unsigned int length){
-  String message = "";
+void check(){
+  if (status) return;
 
-  for (int i = 0; i < length; i++){
-    message += (char)payload[i];
+  bool pinsdrin = false;
+  for(int i = 0; i < 4; i++){
+    if (digitalRead(kabelPins[i]) == HIGH){
+      pinsdrin = true;
+    }
   }
 
-  if(message == "START"){
-    digitalWrite(LED_START, HIGH);
-  } else-if(message == "SOLVED"){
-    digitalWrite(LED_SOLVED, HIGH);
-  } else-if(message == "RESET"){
-    ESP.restart();
-    message = START;
+  if (pinsdrin == false){
+    status = true;
+    Serial.println("Rätsel gelöst!")
   }
 }
 
-void loop() {
+void loop(){
+  check();
+  delay(100);
 }
